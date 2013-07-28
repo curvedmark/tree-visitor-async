@@ -7,6 +7,7 @@ Like [Tree Visitor](https://github.com/curvedmark/tree-visitor), but actions acc
 ## API
 
 ```javascript
+var fs = require('fs');
 var VisitorAsync = require('tree-visitor-async');
 
 var nodes = [
@@ -15,7 +16,11 @@ var nodes = [
 ];
 var visitorAsync = new VisitorAsync({
 	import: function (visitor, importNode, done) {
-		fs.readFile(importNode.value, 'utf8', done);
+		fs.readFile(importNode.value, 'utf8', function (err, content) {
+			if (err) return done(err);
+			console.log(content);
+			done();
+		});
 	}
 });
 visitorAsync.visit(nodes, function (err) {
