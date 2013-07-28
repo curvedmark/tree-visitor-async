@@ -15,17 +15,17 @@ VisitorAsync.prototype._visitNodes = function (nodes, done) {
 	visitNodesFrom(0);
 
 	function visitNodesFrom(i) {
-		if (i >= nodes.length) return done(null, nodes);
+		if (i >= nodes.length) return done.call(self, null, nodes);
 		self._visitNode(nodes[i], function (err, node) {
-			if (err) return done(err);
+			if (err) return done.call(self, err);
 			visitNodesFrom(i + 1);
 		});
 	}
 };
 
 VisitorAsync.prototype._visitNode = function (node, done) {
-	if (node !== Object(node) || !node.type) return done(null, node);
+	if (node !== Object(node) || !node.type) return done.call(this, null, node);
 	var action = this._actions[node.type] || this._actions.node;
 	if (action) return action.call(this._actions, this, node, done.bind(this));
-	done(null, node);
+	done.call(this, null, node);
 };

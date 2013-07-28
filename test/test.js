@@ -148,4 +148,13 @@ describe('VisitorAsync', function () {
 			done();
 		});
 	});
+
+	it('should set callback context', function (done) {
+		var visitorAsync = new VisitorAsync({});
+		visitorAsync.visit({}, function (err, result) {
+			if (err) return done(err);
+			assert.equal(this, visitorAsync, 'equal');
+			done();
+		});
+	});
 });
