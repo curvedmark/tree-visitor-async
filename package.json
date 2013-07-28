@@ -1,0 +1,31 @@
+{
+  "name": "tree-visitor-async",
+  "version": "0.1.0",
+  "description": "Visit nodes in the tree asynchronously and sequentially",
+  "main": "VisitorAsync.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/curvedmark/tree-visitor-async.git"
+  },
+  "keywords": [
+    "ast",
+    "tree",
+    "visitor",
+    "async",
+    "compiler"
+  ],
+  "author": "Glen Huang <curvedmark@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/curvedmark/tree-visitor-async/issues"
+  },
+  "devDependencies": {
+    "mocha": "1.x"
+  }
+}
