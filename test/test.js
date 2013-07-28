@@ -122,4 +122,16 @@ describe('VisitorAsync', function () {
 			if (count) return done(new Error('node is not ignored'));
 		});
 	});
+
+	it('should ignore node for having no matching action', function (done) {
+		var nodes = [
+			{ type: 'number', value: 1 },
+			{ type: 'string', value: 'abc' }
+		];
+		new VisitorAsync({}).visit(nodes, function (err, result) {
+			if (err) return done(err);
+			assert.equal(result, nodes);
+			done();
+		});
+	});
 });

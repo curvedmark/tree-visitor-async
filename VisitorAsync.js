@@ -29,4 +29,5 @@ VisitorAsync.prototype._visitNode = function (node, done) {
 	if (node !== Object(node) || !node.type) return done(null, node);
 	var action = this._actions[node.type] || this._actions.node;
 	if (action) return action.call(this._actions, this, node, done.bind(this));
+	done(null, node);
 };
