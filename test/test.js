@@ -36,14 +36,18 @@ describe('VisitorAsync', function () {
 		];
 		new VisitorAsync({
 			number: function (visitor, number, cb) {
-				++count;
-				assert.equal(number.value, 1);
-				cb();
+				setTimeout(function () {
+					++count;
+					assert.equal(number.value, 1);
+					cb();
+				}, 0);
 			},
 			string: function (visitor, string, cb) {
-				++count;
-				assert.equal(string.value, 'abc');
-				cb();
+				setTimeout(function () {
+					++count;
+					assert.equal(string.value, 'abc');
+					cb();
+				}, 0);
 			}
 		}).visit(nodes, function (err) {
 			if (err) return done(err);
@@ -61,13 +65,17 @@ describe('VisitorAsync', function () {
 		};
 		new VisitorAsync({
 			expression: function (visitor, expression, cb) {
-				++count;
-				visitor.visit(expression.value, cb);
+				setTimeout(function () {
+					++count;
+					visitor.visit(expression.value, cb);
+				}, 0);
 			},
 			number: function (visitor, number, cb) {
-				++count;
-				assert.equal(number.value, 1);
-				cb();
+				setTimeout(function () {
+					++count;
+					assert.equal(number.value, 1);
+					cb();
+				}, 0);
 			}
 		}).visit(node, function (err) {
 			if (err) return done(err);
@@ -82,9 +90,11 @@ describe('VisitorAsync', function () {
 		var node = { type: 'number', value: 1 };
 		new VisitorAsync({
 			node: function (visitor, number, cb) {
-				++count;
-				assert.equal(number.value, 1);
-				cb();
+				setTimeout(function () {
+					++count;
+					assert.equal(number.value, 1);
+					cb();
+				}, 0);
 			}
 		}).visit(node, function (err) {
 			if (err) return done(err);
@@ -99,8 +109,10 @@ describe('VisitorAsync', function () {
 		var node = { value: 1 };
 		new VisitorAsync({
 			node: function (visitor, node, cb) {
-				++count;
-				cb();
+				setTimeout(function () {
+					++count;
+					cb();
+				}, 0);
 			}
 		}).visit(node, function (err) {
 			if (err) return done(err);
@@ -114,8 +126,10 @@ describe('VisitorAsync', function () {
 		var node = null;
 		new VisitorAsync({
 			node: function (visitor, node, cb) {
-				++count;
-				cb();
+				setTimeout(function () {
+					++count;
+					cb();
+				}, 0);
 			}
 		}).visit(node, function (err) {
 			if (err) return done(err);
