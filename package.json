@@ -1,10 +1,17 @@
 {
   "name": "tree-visitor-async",
-  "version": "0.1.0",
-  "description": "Visit nodes in the tree asynchronously and sequentially",
+  "version": "0.3.0",
+  "description": "Visit nodes in the tree asynchronously and sequentially. Supports promises.",
   "main": "VisitorAsync.js",
   "directories": {
     "test": "test"
+  },
+  "dependencies": {
+    "promise-now": "*"
+  },
+  "devDependencies": {
+    "mocha": "1.x",
+    "mocha-as-promised": "1.x"
   },
   "scripts": {
     "test": "mocha"
@@ -24,8 +31,5 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/curvedmark/tree-visitor-async/issues"
-  },
-  "devDependencies": {
-    "mocha": "1.x"
   }
 }
