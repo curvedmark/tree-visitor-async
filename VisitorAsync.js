@@ -20,11 +20,11 @@ VisitorAsync.prototype._visitNodes = function (nodes) {
 };
 
 VisitorAsync.prototype._visitNode = function (node) {
-	var promise = new Promise();
-	if (node !== Object(node) || !node.type) return promise.fulfill(node);
+	var promise = new Promise().fulfill(node, this);
+	if (node !== Object(node) || !node.type) return promise;
 
 	var action = this._actions[node.type] || this._actions.node;
-	if (!action) return promise.fulfill(node);
+	if (!action) return promise;
 
-	return promise.fulfill().then(action.bind(this._actions, this, node));
+	return promise.then(action);
 };

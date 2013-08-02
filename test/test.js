@@ -9,7 +9,7 @@ describe('VisitorAsync', function () {
 		var node = { type: 'number', value: 1 };
 
 		return new VisitorAsync({
-			number: function (visitor, number) {
+			number: function (number) {
 				++count;
 				assert.equal(number.value, 1);
 			}
@@ -23,7 +23,7 @@ describe('VisitorAsync', function () {
 		var node = { type: 'number', value: 1 };
 
 		return new VisitorAsync({
-			number: function (visitor, number) {
+			number: function (number) {
 				var promise = new Promise();
 				setTimeout(function () {
 					++count;
@@ -49,11 +49,11 @@ describe('VisitorAsync', function () {
 		];
 
 		return new VisitorAsync({
-			number: function (visitor, number) {
+			number: function (number) {
 				++count;
 				assert.equal(number.value, 1);
 			},
-			string: function (visitor, string) {
+			string: function (string) {
 				++count;
 				assert.equal(string.value, 'abc');
 			}
@@ -70,7 +70,7 @@ describe('VisitorAsync', function () {
 		];
 
 		return new VisitorAsync({
-			number: function (visitor, number) {
+			number: function (number) {
 				var promise = new Promise();
 				setTimeout(function () {
 					++count;
@@ -83,7 +83,7 @@ describe('VisitorAsync', function () {
 				}, 0);
 				return promise;
 			},
-			string: function (visitor, string) {
+			string: function (string) {
 				var promise = new Promise();
 				setTimeout(function () {
 					++count;
@@ -109,11 +109,11 @@ describe('VisitorAsync', function () {
 		};
 
 		return new VisitorAsync({
-			expression: function (visitor, expression) {
+			expression: function (expression) {
 				++count;
-				return visitor.visit(expression.value);
+				return this.visit(expression.value);
 			},
-			number: function (visitor, number) {
+			number: function (number) {
 				++count;
 				assert.equal(number.value, 1);
 			}
@@ -130,17 +130,17 @@ describe('VisitorAsync', function () {
 		};
 
 		return new VisitorAsync({
-			expression: function (visitor, expression) {
+			expression: function (expression) {
 				var promise = new Promise();
 				setTimeout(function () {
 					++count;
-					visitor.visit(expression.value).then(function () {
+					this.visit(expression.value).then(function () {
 						promise.fulfill();
 					});
-				}, 0);
+				}.bind(this), 0);
 				return promise;
 			},
-			number: function (visitor, number) {
+			number: function (number) {
 				var promise = new Promise();
 				setTimeout(function () {
 					++count;
@@ -159,21 +159,21 @@ describe('VisitorAsync', function () {
 	});
 
 	it("should stop at the first error", function (done) {
-			var result = 1;
-			var nodes = [
-				{ type: 'number', value: 1 },
-				{ type: 'string', value: 'abc' }
-			];
+		var result = 1;
+		var nodes = [
+			{ type: 'number', value: 1 },
+			{ type: 'string', value: 'abc' }
+		];
 
-			return new VisitorAsync({
-				number: function (transformer, number, cb) {
-					throw new Error('error');
-				},
-				string: function (transformer, string, cb) {
-					result = 2;
-				}
-			}).visit(nodes).then(null, function () {
-				assert.equal(result, 1);
-			});
+		return new VisitorAsync({
+			number: function (number, cb) {
+				throw new Error('error');
+			},
+			string: function (string, cb) {
+				result = 2;
+			}
+		}).visit(nodes).then(null, function () {
+			assert.equal(result, 1);
 		});
+	});
 });
