@@ -1,15 +1,10 @@
+var Visitor = require('tree-visitor');
 var Promise = require('promise-now');
 
 module.exports = VisitorAsync;
 
-function VisitorAsync(actions) {
-	this._actions = actions;
-}
-
-VisitorAsync.prototype.visit = function(node) {
-	if (Array.isArray(node)) return this._visitNodes(node);
-	return this._visitNode(node);
-};
+function VisitorAsync() {}
+VisitorAsync.prototype = new Visitor();
 
 VisitorAsync.prototype._visitNodes = function (nodes) {
 	var promise = this._visitNode();
@@ -19,12 +14,10 @@ VisitorAsync.prototype._visitNodes = function (nodes) {
 	return promise.then(function () { return nodes; });
 };
 
+var _visitNode = Visitor.prototype._visitNode;
 VisitorAsync.prototype._visitNode = function (node) {
-	var promise = new Promise().fulfill(node, this);
-	if (node !== Object(node) || !node.type) return promise;
-
-	var action = this._actions[node.type] || this._actions.node;
-	if (!action) return promise;
-
-	return promise.then(action);
+	var promise = new Promise().fulfill(undefined, this);
+	return promise.then(function () {
+		return _visitNode.call(this, node);
+	});
 };

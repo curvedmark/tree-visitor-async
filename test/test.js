@@ -1,6 +1,6 @@
 var assert = require('assert');
 var Promise = require('promise-now');
-var VisitorAsync = require('../VisitorAsync');
+var VisitorAsync = require('..');
 require("mocha-as-promised")();
 
 describe('VisitorAsync', function () {
@@ -8,12 +8,15 @@ describe('VisitorAsync', function () {
 		var count = 0;
 		var node = { type: 'number', value: 1 };
 
-		return new VisitorAsync({
-			number: function (number) {
-				++count;
-				assert.equal(number.value, 1);
-			}
-		}).visit(node).then(function () {
+		function MyVisitorAsync() {}
+		MyVisitorAsync.prototype = new VisitorAsync();
+
+		MyVisitorAsync.prototype.visit_number = function (number) {
+			++count;
+			assert.equal(number.value, 1);
+		};
+
+		return new MyVisitorAsync().visit(node).then(function () {
 			if (!count) throw new Error('node is never visited');
 		});
 	});
@@ -22,21 +25,24 @@ describe('VisitorAsync', function () {
 		var count = 0;
 		var node = { type: 'number', value: 1 };
 
-		return new VisitorAsync({
-			number: function (number) {
-				var promise = new Promise();
-				setTimeout(function () {
-					++count;
-					try {
-						assert.equal(number.value, 1);
-					} catch (err) {
-						return promise.reject(err);
-					}
-					promise.fulfill();
-				}, 0);
-				return promise;
-			}
-		}).visit(node).then(function () {
+		function MyVisitorAsync() {}
+		MyVisitorAsync.prototype = new VisitorAsync();
+
+		MyVisitorAsync.prototype.visit_number = function (number) {
+			var promise = new Promise();
+			setTimeout(function () {
+				++count;
+				try {
+					assert.equal(number.value, 1);
+				} catch (err) {
+					return promise.reject(err);
+				}
+				promise.fulfill();
+			}, 0);
+			return promise;
+		};
+
+		return new MyVisitorAsync().visit(node).then(function () {
 			if (!count) throw new Error('node is never visited');
 		});
 	});
@@ -48,16 +54,20 @@ describe('VisitorAsync', function () {
 			{ type: 'string', value: 'abc'}
 		];
 
-		return new VisitorAsync({
-			number: function (number) {
-				++count;
-				assert.equal(number.value, 1);
-			},
-			string: function (string) {
-				++count;
-				assert.equal(string.value, 'abc');
-			}
-		}).visit(nodes).then(function () {
+		function MyVisitorAsync() {}
+		MyVisitorAsync.prototype = new VisitorAsync();
+
+		MyVisitorAsync.prototype.visit_number = function (number) {
+			++count;
+			assert.equal(number.value, 1);
+		};
+
+		MyVisitorAsync.prototype.visit_string = function (string) {
+			++count;
+			assert.equal(string.value, 'abc');
+		};
+
+		return new MyVisitorAsync().visit(nodes).then(function () {
 			if (count !== 2) throw new Error('some node is never visited');
 		});
 	});
@@ -69,34 +79,38 @@ describe('VisitorAsync', function () {
 			{ type: 'string', value: 'abc'}
 		];
 
-		return new VisitorAsync({
-			number: function (number) {
-				var promise = new Promise();
-				setTimeout(function () {
-					++count;
-					try {
-						assert.equal(number.value, 1);
-					} catch (err) {
-						return promise.reject(err);
-					}
-					promise.fulfill();
-				}, 0);
-				return promise;
-			},
-			string: function (string) {
-				var promise = new Promise();
-				setTimeout(function () {
-					++count;
-					try {
-						assert.equal(string.value, 'abc');
-					} catch (err) {
-						return promise.reject(err);
-					}
-					promise.fulfill();
-				}, 0);
-				return promise;
-			}
-		}).visit(nodes).then(function () {
+		function MyVisitorAsync() {}
+		MyVisitorAsync.prototype = new VisitorAsync();
+
+		MyVisitorAsync.prototype.visit_number = function (number) {
+			var promise = new Promise();
+			setTimeout(function () {
+				++count;
+				try {
+					assert.equal(number.value, 1);
+				} catch (err) {
+					return promise.reject(err);
+				}
+				promise.fulfill();
+			}, 0);
+			return promise;
+		};
+
+		MyVisitorAsync.prototype.visit_string = function (string) {
+			var promise = new Promise();
+			setTimeout(function () {
+				++count;
+				try {
+					assert.equal(string.value, 'abc');
+				} catch (err) {
+					return promise.reject(err);
+				}
+				promise.fulfill();
+			}, 0);
+			return promise;
+		};
+
+		return new MyVisitorAsync().visit(nodes).then(function () {
 			if (count !== 2) throw new Error('some node is never visited');
 		});
 	});
@@ -108,16 +122,20 @@ describe('VisitorAsync', function () {
 			value: { type: 'number', value: 1 }
 		};
 
-		return new VisitorAsync({
-			expression: function (expression) {
-				++count;
-				return this.visit(expression.value);
-			},
-			number: function (number) {
-				++count;
-				assert.equal(number.value, 1);
-			}
-		}).visit(node).then(function () {
+		function MyVisitorAsync() {}
+		MyVisitorAsync.prototype = new VisitorAsync();
+
+		MyVisitorAsync.prototype.visit_expression = function (expression) {
+			++count;
+			return this.visit(expression.value);
+		};
+
+		MyVisitorAsync.prototype.visit_number = function (number) {
+			++count;
+			assert.equal(number.value, 1);
+		};
+
+		return new MyVisitorAsync().visit(node).then(function () {
 			if (count !== 2) throw new Error('some node is never visited');
 		});
 	});
@@ -129,31 +147,35 @@ describe('VisitorAsync', function () {
 			value: { type: 'number', value: 1 }
 		};
 
-		return new VisitorAsync({
-			expression: function (expression) {
-				var promise = new Promise();
-				setTimeout(function () {
-					++count;
-					this.visit(expression.value).then(function () {
-						promise.fulfill();
-					});
-				}.bind(this), 0);
-				return promise;
-			},
-			number: function (number) {
-				var promise = new Promise();
-				setTimeout(function () {
-					++count;
-					try {
-						assert.equal(number.value, 1);
-					} catch (err) {
-						return promise.reject(err);
-					}
+		function MyVisitorAsync() {}
+		MyVisitorAsync.prototype = new VisitorAsync();
+
+		MyVisitorAsync.prototype.visit_expression = function (expression) {
+			var promise = new Promise();
+			setTimeout(function () {
+				++count;
+				this.visit(expression.value).then(function () {
 					promise.fulfill();
-				}, 0);
-				return promise;
-			}
-		}).visit(node).then(function () {
+				});
+			}.bind(this), 0);
+			return promise;
+		};
+
+		MyVisitorAsync.prototype.visit_number = function (number) {
+			var promise = new Promise();
+			setTimeout(function () {
+				++count;
+				try {
+					assert.equal(number.value, 1);
+				} catch (err) {
+					return promise.reject(err);
+				}
+				promise.fulfill();
+			}, 0);
+			return promise;
+		};
+
+		return new MyVisitorAsync().visit(node).then(function () {
 			if (count !== 2) throw new Error('some node is never visited');
 		});
 	});
@@ -165,14 +187,18 @@ describe('VisitorAsync', function () {
 			{ type: 'string', value: 'abc' }
 		];
 
-		return new VisitorAsync({
-			number: function (number, cb) {
-				throw new Error('error');
-			},
-			string: function (string, cb) {
-				result = 2;
-			}
-		}).visit(nodes).then(null, function () {
+		function MyVisitorAsync() {}
+		MyVisitorAsync.prototype = new VisitorAsync();
+
+		MyVisitorAsync.prototype.visit_number = function (number) {
+			throw new Error('error');
+		};
+
+		MyVisitorAsync.prototype.visit_string = function (string) {
+			result = 2;
+		};
+
+		return new MyVisitorAsync().visit(nodes).then(null, function () {
 			assert.equal(result, 1);
 		});
 	});
