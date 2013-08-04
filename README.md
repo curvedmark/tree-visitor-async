@@ -20,12 +20,10 @@ MyVisitorAsync.prototype = new VisitorAsync();
 
 MyVisitorAsync.prototype.visit_import = function (importNode) {
 	var deferred = Q.defer();
-	fs.readFile(importNode.value, 'utf8', function (err, content) {
-		if (err) return deferred.reject(err);
+	fs.readFile(importNode.value, 'utf8', deferred.makeNodeResolver());
+	return deferred.promise.then(function (content) {
 		console.log(content);
-		deferred.resolve(content);
 	});
-	return deferred.promise;
 };
 
 new MyVisitorAsync().visit(nodes).then(function () {
