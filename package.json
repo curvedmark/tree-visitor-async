@@ -1,6 +1,6 @@
 {
   "name": "tree-visitor-async",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "Visit nodes in the tree asynchronously and sequentially. Supports promises.",
   "main": "lib/VisitorAsync.js",
   "directories": {
