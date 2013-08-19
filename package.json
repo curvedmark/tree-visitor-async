@@ -16,7 +16,7 @@
     "mocha-as-promised": "1.x"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --bail"
   },
   "repository": {
     "type": "git",
